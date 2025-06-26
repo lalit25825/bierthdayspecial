@@ -6,9 +6,13 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 
-require('dotenv').config();
-mongoose.connect(process.env.MONGO_URL);
-let token = jwt.sign({username}, process.env.JWT_SECRET);
+require('dotenv').config();               // 1. load .env
+const mongoose = require('mongoose');     // 2. import mongoose
+mongoose.connect(process.env.MONGO_URL);  // 3. then connect
+
+const express = require('express');
+// ... rest of your code
+
 
 
 
@@ -74,7 +78,5 @@ app.get('/logout',function(req,res){
 
 
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log("Server is running on port", port);
-});
+app.listen(process.env.PORT || 3000);
+
