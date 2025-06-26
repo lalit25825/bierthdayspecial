@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @keyframes pop {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .animate-pop {
+      animation: pop 0.6s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-900 to-indigo-800 flex flex-col items-center justify-center text-white font-sans animate-fade-in">
+
+  <!-- Heading -->
+  <div class="text-center mt-5 animate-pop">
+    <h1 class="text-4xl font-bold animate-bounce">🎉 Welcome to the Birthday Girl....[COCO] 🎉</h1>
+    <p class="text-lg mt-2 text-indigo-200 opacity-80">Log in or create an account to reveal the surprise!</p>
+  </div>
+
+  <!-- Login Form -->
+  <div class="bg-zinc-900 bg-opacity-80 rounded-2xl shadow-lg p-8 w-full max-w-md mb-8 transform scale-90 hover:scale-100 transition duration-300 ease-out animate-pop">
+    <h2 class="text-2xl font-semibold text-center mb-4">Login</h2>
+    <form method="POST" action="/login" class="space-y-4">
+      <input type="text" name="username" placeholder="Username" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-indigo-500 focus:outline-none">
+      <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-indigo-500 focus:outline-none">
+      <input type="submit" value="Login" class="w-full bg-indigo-600 hover:bg-indigo-700 transition rounded py-2 font-semibold hover:scale-105 duration-200">
+    </form>
+  </div>
+
+  <!-- Create User Form -->
+  <div class="bg-zinc-900 bg-opacity-80 rounded-2xl shadow-lg p-8 w-full max-w-md transform scale-90 hover:scale-100 transition duration-300 ease-out animate-pop delay-200">
+    <h2 class="text-2xl font-semibold text-center mb-4">Create User</h2>
+    <form method="POST" action="/create" class="space-y-4">
+      <input type="text" name="username" placeholder="username" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-pink-500 focus:outline-none">
+      <input type="text" name="email" placeholder="email" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-pink-500 focus:outline-none">
+      <input type="password" name="password" placeholder="Password" class="w-full px-4 py-2 rounded bg-zinc-800 text-white border border-pink-500 focus:outline-none">
+      <input type="submit" value="Create User" class="w-full bg-pink-600 hover:bg-pink-700 transition rounded py-2 font-semibold hover:scale-105 duration-200">
+    </form>
+  </div>
+    
+    <% if (error) { %>
+        <script>
+             alert("<%= error %>");
+         </script>
+    <% } %>
+
+
+</body>
+</html>

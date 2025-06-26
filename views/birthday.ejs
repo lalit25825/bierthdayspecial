@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Magical Birthday Surprise</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;600&display=swap');
+    
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      cursor: pointer;
+      background: linear-gradient(to bottom, #0f0524 0%, #2a0845 100%);
+    }
+
+    /* Cosmic Sky with Shades */
+    #sky {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(159, 59, 218, 0.2) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 30%, rgba(255, 107, 107, 0.2) 0%, transparent 40%),
+        radial-gradient(ellipse at 40% 70%, rgba(104, 109, 224, 0.2) 0%, transparent 40%),
+        radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+    }
+
+    /* Moon with Glow */
+    #moon {
+      position: absolute;
+      top: 15%;
+      right: 15%;
+      width: 100px;
+      height: 100px;
+      background: #f8f3c9;
+      border-radius: 50%;
+      box-shadow: 
+        0 0 60px 20px rgba(248, 243, 201, 0.4),
+        0 0 100px 40px rgba(255, 159, 243, 0.2);
+      z-index: 1;
+    }
+
+    /* Fluffy Clouds */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      filter: blur(20px);
+      z-index: 2;
+      animation: float 120s linear infinite;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes float {
+      0% { transform: translateX(0) translateY(0); }
+      50% { transform: translateX(50px) translateY(20px); }
+      100% { transform: translateX(100vw) translateY(0); }
+    }
+
+    /* Stars */
+    .star {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle var(--duration) infinite ease-in-out;
+      z-index: 1;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Ground */
+    #ground {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 20%;
+      background: linear-gradient(to top, #3a1068 0%, #6a3093 100%);
+      z-index: 2;
+    }
+
+    /* Scene Container */
+    #scene {
+      position: fixed;
+      width: 100%;
+      height: 100vh;
+      z-index: 10;
+    }
+
+    /* Characters - Girl position restored to left side */
+    #girl {
+      position: absolute;
+      bottom: 20%;
+      left: 30%;
+      width: 180px;
+      height: auto;
+      z-index: 10;
+      filter: drop-shadow(0 0 15px rgba(255, 159, 243, 0.5));
+      transition: all 0.3s ease;
+    }
+
+    #boy {
+      position: absolute;
+      bottom: 20%;
+      left: -200px;
+      width: 180px;
+      height: auto;
+      opacity: 0;
+      z-index: 10;
+      filter: drop-shadow(0 0 15px rgba(255, 159, 243, 0.5));
+      transition: all 1s ease;
+    }
+
+    /* Spark Effect */
+    #spark {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, #ff9ff3 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+      z-index: 9;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 10px #f368e0);
+    }
+
+    /* Firecracker */
+    #firecracker {
+      position: absolute;
+      bottom: 28%;
+      left: 50%;
+      width: 50px;
+      opacity: 0;
+      transform: translateX(-50%);
+      z-index: 11;
+      transition: all 0.1s linear;
+      filter: drop-shadow(0 0 10px #ff6b6b);
+    }
+
+    /* Firework Trail */
+    #firework-trail {
+      position: absolute;
+      bottom: 28%;
+      left: 50%;
+      width: 4px;
+      height: 0;
+      background: linear-gradient(to top, rgba(255,255,255,0) 0%, #ff9ff3 100%);
+      transform: translateX(-50%);
+      opacity: 0;
+      z-index: 10;
+      transition: height 0.1s linear;
+    }
+
+    /* Birthday Message */
+    #message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      font-family: 'Dancing Script', cursive;
+      font-size: 5rem;
+      color: #eee5ed;
+      text-shadow: 
+        0 0 10px #ffc2f7,
+        0 0 20px #ff6b6b,
+        0 0 30px #ff9ff3;
+      opacity: 0;
+      text-align: center;
+      z-index: 20;
+      transition: all 1s ease;
+      pointer-events: none;
+    }
+
+    /* Larger Chat Bubbles */
+    .chat-bubble {
+      position: absolute;
+      max-width: 250px;
+      padding: 15px 20px;
+      border-radius: 25px;
+      color: white;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 15;
+      filter: drop-shadow(0 0 5px rgba(0,0,0,0.3));
+    }
+
+    .girl-chat {
+      background: #6a3093;
+      left: 35%;
+      bottom: 45%;
+      transform: translateY(20px);
+    }
+
+    .boy-chat {
+      background: #3a1068;
+      left: 15%;
+      bottom: 45%;
+      transform: translateY(20px);
+    }
+
+    /* Final message bubble */
+    .final-chat {
+      background: #ff6b6b;
+      left: 50%;
+      bottom: 25%;
+      transform: translate(-50%, 20px);
+      font-size: 1.3rem;
+      text-align: center;
+      max-width: 300px;
+    }
+
+    /* Firework Explosion Container */
+    #explosion {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 12;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Sparkle Effect */
+    .sparkle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: radial-gradient(circle, #fff 0%, #ff9ff3 70%, transparent 100%);
+      border-radius: 50%;
+      z-index: 15;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cosmic Sky with Shades -->
+  <div id="sky">
+    <div id="moon"></div>
+    <!-- Stars and clouds will be added by JS -->
+  </div>
+
+  <!-- Ground -->
+  <div id="ground"></div>
+
+  <!-- Scene -->
+  <div id="scene">
+    <!-- Characters -->
+    <img id="girl" src="images/girl.png" alt="Girl">
+    <img id="boy" src="images/boy.png" alt="Boy">
+    
+    <!-- Spark -->
+    <div id="spark"></div>
+    
+    <!-- Firecracker -->
+    <img id="firecracker" src="images/firecracker.png" alt="Firecracker">
+    
+    <!-- Firework Trail -->
+    <div id="firework-trail"></div>
+    
+    <!-- Explosion Container -->
+    <div id="explosion"></div>
+    
+    <!-- Message -->
+    <div id="message">
+      HAPPY BIRTHDAY COCO!<br>
+      <span style="font-size: 2rem;">!</span>
+    </div>
+    
+    <!-- Chat Bubbles -->
+    <div class="chat-bubble girl-chat" id="girl-chat1">aata Bday tevdha special nahi vatat... </div>
+    <div class="chat-bubble boy-chat" id="boy-chat1">oyy Gayatrii ith ekti kay krtey ?  </div>
+    <div class="chat-bubble girl-chat" id="girl-chat2">kahi nahi... ata Bday pahilyasarkha special nahi vatat</div>
+    <div class="chat-bubble boy-chat" id="boy-chat2">achha thamb me tula kahi tri dakhvto....</div>
+    <div class="chat-bubble boy-chat" id="boy-chat3">he ghe spark of magic! ✨</div>
+    <div class="chat-bubble girl-chat" id="girl-chat3">Whoa! he kay aahe ree?</div>
+    <div class="chat-bubble boy-chat" id="boy-chat4">he tujh bday gift now light up this firework</div>
+    <div class="chat-bubble girl-chat" id="girl-chat4">Hooo... aata krtee !</div>
+    <div class="chat-bubble final-chat" id="final-chat">wooow yarrr Thank you❤️</div>
+  </div>
+
+  <script>
+    // Create stars
+    const sky = document.getElementById('sky');
+    
+    // Create moon
+    const moon = document.getElementById('moon');
+    
+    // Create clouds
+    for (let i = 0; i < 15; i++) {
+      const cloud = document.createElement('div');
+      cloud.className = 'cloud';
+      const size = Math.random() * 200 + 100;
+      cloud.style.width = `${size}px`;
+      cloud.style.height = `${size * 0.5}px`;
+      cloud.style.left = `${Math.random() * 120 - 10}%`;
+      cloud.style.top = `${Math.random() * 60 + 10}%`;
+      cloud.style.opacity = Math.random() * 0.2 + 0.1;
+      cloud.style.animationDuration = `${Math.random() * 120 + 120}s`;
+      cloud.style.animationDelay = `${Math.random() * 30}s`;
+      sky.appendChild(cloud);
+    }
+
+    // Create twinkling stars
+    for (let i = 0; i < 200; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      const size = Math.random() * 3 + 1;
+      star.style.width = `${size}px`;
+      star.style.height = `${size}px`;
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = `${Math.random() * 100}%`;
+      star.style.setProperty('--duration', `${Math.random() * 5 + 3}s`);
+      star.style.animationDelay = `${Math.random() * 5}s`;
+      star.style.opacity = Math.random() * 0.5 + 0.1;
+      sky.appendChild(star);
+    }
+
+    // Create sparkle effect
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = `${x}px`;
+      sparkle.style.top = `${y}px`;
+      document.body.appendChild(sparkle);
+      
+      sparkle.animate([
+        { transform: 'scale(0.5)', opacity: 0 },
+        { transform: 'scale(1.5)', opacity: 1 },
+        { transform: 'scale(0)', opacity: 0 }
+      ], {
+        duration: 1000,
+        easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+      });
+      
+      setTimeout(() => sparkle.remove(), 1000);
+    }
+
+    // Click to create sparkles
+    document.addEventListener('click', (e) => {
+      createSparkle(e.clientX, e.clientY);
+    });
+
+    // Get all elements
+    const girl = document.getElementById('girl');
+    const boy = document.getElementById('boy');
+    const spark = document.getElementById('spark');
+    const firecracker = document.getElementById('firecracker');
+    const fireworkTrail = document.getElementById('firework-trail');
+    const message = document.getElementById('message');
+    const explosion = document.getElementById('explosion');
+    const finalChat = document.getElementById('final-chat');
+    
+    // Chat bubbles
+    const chatBubbles = {
+      girl1: document.getElementById('girl-chat1'),
+      boy1: document.getElementById('boy-chat1'),
+      girl2: document.getElementById('girl-chat2'),
+      boy2: document.getElementById('boy-chat2'),
+      boy3: document.getElementById('boy-chat3'),
+      girl3: document.getElementById('girl-chat3'),
+      boy4: document.getElementById('boy-chat4'),
+      girl4: document.getElementById('girl-chat4')
+    };
+
+    let step = 0;
+    
+    function nextStep() {
+      step++;
+      handleStep();
+    }
+
+    function handleStep() {
+      switch(step) {
+        case 1:
+          // Girl stands alone with first dialogue
+          chatBubbles.girl1.style.opacity = '1';
+          chatBubbles.girl1.style.transform = 'translateY(0)';
+          break;
+          
+        case 2:
+          // Boy enters after first click
+          chatBubbles.girl1.style.opacity = '0';
+          chatBubbles.girl1.style.transform = 'translateY(20px)';
+          boy.style.opacity = '1';
+          boy.style.left = '20%';
+          setTimeout(() => {
+            chatBubbles.boy1.style.opacity = '1';
+            chatBubbles.boy1.style.transform = 'translateY(0)';
+          }, 1000);
+          break;
+          
+        case 3:
+          chatBubbles.boy1.style.opacity = '0';
+          chatBubbles.boy1.style.transform = 'translateY(20px)';
+          chatBubbles.girl2.style.opacity = '1';
+          chatBubbles.girl2.style.transform = 'translateY(0)';
+          break;
+          
+        case 4:
+          chatBubbles.girl2.style.opacity = '0';
+          chatBubbles.girl2.style.transform = 'translateY(20px)';
+          chatBubbles.boy2.style.opacity = '1';
+          chatBubbles.boy2.style.transform = 'translateY(0)';
+          break;
+          
+        case 5:
+          chatBubbles.boy2.style.opacity = '0';
+          chatBubbles.boy2.style.transform = 'translateY(20px)';
+          chatBubbles.boy3.style.opacity = '1';
+          chatBubbles.boy3.style.transform = 'translateY(0)';
+          
+          // Boy gives spark to girl
+          spark.style.left = '25%';
+          spark.style.bottom = '23%';
+          spark.style.opacity = '1';
+          spark.style.width = '40px';
+          spark.style.height = '40px';
+          
+          setTimeout(() => {
+            spark.style.left = '32%';
+            spark.style.bottom = '22%';
+            spark.style.width = '60px';
+            spark.style.height = '60px';
+            
+            setTimeout(() => {
+              spark.style.opacity = '0';
+              girl.style.filter = 'drop-shadow(0 0 25px #f368e0)';
+              setTimeout(() => {
+                girl.style.filter = 'drop-shadow(0 0 15px rgba(255, 159, 243, 0.5))';
+              }, 500);
+            }, 300);
+          }, 300);
+          break;
+          
+        case 6:
+          chatBubbles.boy3.style.opacity = '0';
+          chatBubbles.boy3.style.transform = 'translateY(20px)';
+          chatBubbles.girl3.style.opacity = '1';
+          chatBubbles.girl3.style.transform = 'translateY(0)';
+          break;
+          
+        case 7:
+          chatBubbles.girl3.style.opacity = '0';
+          chatBubbles.girl3.style.transform = 'translateY(20px)';
+          chatBubbles.boy4.style.opacity = '1';
+          chatBubbles.boy4.style.transform = 'translateY(0)';
+          
+          // Show firecracker
+          firecracker.style.opacity = '1';
+          break;
+          
+        case 8:
+          chatBubbles.boy4.style.opacity = '0';
+          chatBubbles.boy4.style.transform = 'translateY(20px)';
+          chatBubbles.girl4.style.opacity = '1';
+          chatBubbles.girl4.style.transform = 'translateY(0)';
+          break;
+          
+        case 9:
+          // Launch firecracker
+          chatBubbles.girl4.style.opacity = '0';
+          chatBubbles.girl4.style.transform = 'translateY(20px)';
+          fireworkTrail.style.opacity = '1';
+          
+          let currentBottom = 28;
+          const fireInterval = setInterval(() => {
+            currentBottom += 2;
+            firecracker.style.bottom = `${currentBottom}%`;
+            fireworkTrail.style.height = `${currentBottom - 20}vh`;
+            
+            if (currentBottom > 100) {
+              clearInterval(fireInterval);
+              firecracker.style.opacity = '0';
+              fireworkTrail.style.opacity = '0';
+              
+              // Create massive explosion
+              explosion.style.opacity = '1';
+              createFireworkExplosion();
+              
+              setTimeout(() => {
+                message.style.opacity = '1';
+                message.style.transform = 'translate(-50%, -50%) scale(1)';
+                
+                // After fireworks, show girl's final message
+                setTimeout(() => {
+                  finalChat.style.opacity = '1';
+                  finalChat.style.transform = 'translate(-50%, 0)';
+                }, 3000);
+              }, 1000);
+            }
+          }, 20);
+          break;
+      }
+    }
+
+    function createFireworkExplosion() {
+      // Create 20 simultaneous fireworks
+      for (let fw = 0; fw < 20; fw++) {
+        setTimeout(() => {
+          const fwX = Math.random() * 100;
+          const fwY = Math.random() * 70 + 10;
+          
+          // Create trail
+          const trail = document.createElement('div');
+          trail.style.position = 'absolute';
+          trail.style.left = `${fwX}%`;
+          trail.style.bottom = '20%';
+          trail.style.width = '3px';
+          trail.style.height = '0';
+          trail.style.background = 'linear-gradient(to top, rgba(255,255,255,0) 0%, #ff9ff3 100%)';
+          trail.style.transform = 'translateX(-50%)';
+          trail.style.zIndex = '11';
+          document.body.appendChild(trail);
+          
+          // Animate trail
+          let trailHeight = 0;
+          const trailInterval = setInterval(() => {
+            trailHeight += 2;
+            trail.style.height = `${trailHeight}vh`;
+            
+            if (trailHeight > 80) {
+              clearInterval(trailInterval);
+              trail.remove();
+            }
+          }, 10);
+          
+          // Create explosion at top
+          setTimeout(() => {
+            for (let i = 0; i < 50; i++) {
+              setTimeout(() => {
+                const spark = document.createElement('div');
+                spark.style.position = 'absolute';
+                spark.style.left = `${fwX}%`;
+                spark.style.bottom = '80%';
+                spark.style.width = `${Math.random() * 8 + 3}px`;
+                spark.style.height = spark.style.width;
+                spark.style.borderRadius = '50%';
+                const hue = Math.random() * 60 + 300;
+                spark.style.background = `radial-gradient(circle, white 0%, hsl(${hue}, 100%, 60%) 70%, transparent 100%)`;
+                spark.style.transform = `translate(-50%, 50%) translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px)`;
+                spark.style.opacity = '0';
+                spark.style.transition = `all ${Math.random() * 2 + 1}s ease-out`;
+                spark.style.zIndex = '15';
+                explosion.appendChild(spark);
+                
+                setTimeout(() => {
+                  spark.style.opacity = '1';
+                  setTimeout(() => {
+                    spark.style.opacity = '0';
+                    setTimeout(() => spark.remove(), 2000);
+                  }, 500);
+                }, 10);
+              }, i * 20);
+            }
+          }, 500);
+        }, fw * 300);
+      }
+    }
+
+    // Start the animation sequence automatically
+    setTimeout(() => {
+      nextStep(); // Show girl's first dialogue
+    }, 1000);
+    
+    // Subsequent steps on click
+    document.addEventListener('click', nextStep);
+  </script>
+</body>
+</html>

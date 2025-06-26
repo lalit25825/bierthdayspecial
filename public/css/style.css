@@ -1,0 +1,269 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Dancing Script', cursive;
+    overflow: hidden;
+    height: 100vh;
+    perspective: 1200px;
+    cursor: pointer;
+    background: #0a0e24;
+}
+
+.sky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70%;
+    background: linear-gradient(
+        to bottom,
+        #ff7e5f 0%,
+        #feb47b 15%,
+        #ff6e7f 30%,
+        #bf5fff 45%,
+        #5f86ff 60%,
+        #1a1b3a 85%,
+        #0a0e24 100%
+    );
+    z-index: 0;
+    animation: skyPulse 30s infinite alternate;
+}
+
+@keyframes skyPulse {
+    0% { filter: hue-rotate(0deg) brightness(1); }
+    50% { filter: hue-rotate(5deg) brightness(1.05); }
+    100% { filter: hue-rotate(0deg) brightness(1); }
+}
+
+.stars {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('assets/stars.png');
+    opacity: 0.8;
+    animation: twinkle 5s infinite alternate;
+}
+
+@keyframes twinkle {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 300%;
+    height: 100%;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 50"><path fill="rgba(255,255,255,0.1)" d="M20,40 Q30,20 40,40 Q50,10 70,30 Q80,0 95,20 L95,50 L20,50 Z"/></svg>');
+    animation: drift 120s linear infinite;
+}
+
+@keyframes drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-66.66%); }
+}
+
+.landscape {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    z-index: 2;
+}
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to top, #2e8b57 0%, #3cb371 100%);
+    clip-path: polygon(
+        0% 100%, 100% 100%, 
+        90% 40%, 70% 60%, 
+        50% 30%, 30% 50%, 
+        10% 20%, 0% 40%
+    );
+}
+
+.trees {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.tree {
+    position: absolute;
+    bottom: 0;
+    width: 120px;
+    height: 180px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 180"><path fill="%23255C27" d="M60,0 L90,60 L75,60 L105,120 L80,120 L110,180 L10,180 L40,120 L15,120 L45,60 L30,60 Z"/></svg>') no-repeat;
+    background-size: contain;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+}
+
+.grass {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path fill="%233a7a3a" d="M0,20 Q25,15 50,18 Q75,12 100,14 L100,20 Z"/></svg>');
+    background-size: 200px 20px;
+}
+
+.scene {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    transform-style: preserve-3d;
+    transition: transform 4s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.character {
+    position: absolute;
+    bottom: 30%;
+    width: 140px;
+    transition: all 1s cubic-bezier(0.33, 1, 0.68, 1);
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.4));
+    z-index: 10;
+}
+
+/* Replace your existing .girl class with this */
+.girl {
+  position: absolute;
+  bottom: 30%; /* Adjust this value to change vertical position */
+  left: 50%; /* Start from center */
+  transform: translateX(-50%); /* Center horizontally */
+  width: 140px;
+  height: auto;
+  z-index: 10;
+  
+  /* White background removal - choose ONE method below */
+  
+  /* Method 1: For images with pure white background */
+  filter: brightness(1.1) drop-shadow(0 0 0 white);
+  mix-blend-mode: multiply;
+  
+  /* OR Method 2: For better quality (requires transparent PNG) */
+  /* No filter needed if image has transparent background */
+}
+
+/* Add this to ensure proper containment */
+#scene {
+  position: relative; /* This is crucial for absolute positioning of children */
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.boy {
+    left: -200px;
+    opacity: 0;
+}
+
+.firecracker {
+    position: absolute;
+    bottom: 35%;
+    left: 50%;
+    width: 35px;
+    opacity: 0;
+    transform: translateX(-50%);
+    z-index: 8;
+    transition: bottom 3s cubic-bezier(0.1, 0, 0.8, 1);
+}
+
+.firework-trail {
+    position: absolute;
+    width: 2px;
+    height: 0;
+    background: linear-gradient(to top, rgba(255,255,255,0) 0%, gold 100%);
+    left: 50%;
+    bottom: 35%;
+    transform: translateX(-50%);
+    opacity: 0;
+    z-index: 7;
+}
+
+.firework-explosion {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, white 0%, transparent 70%);
+    opacity: 0;
+    z-index: 9;
+    transform: translate(-50%, -50%);
+}
+
+.spark {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: gold;
+    opacity: 0;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+}
+
+.message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    text-align: center;
+    opacity: 0;
+    transition: all 2s cubic-bezier(0.33, 1, 0.68, 1);
+    z-index: 20;
+}
+
+.message h1 {
+    font-size: 4rem;
+    color: #ffd700;
+    text-shadow: 
+        0 0 10px #fff,
+        0 0 20px #ff0,
+        0 0 40px #ff8c00;
+    margin-bottom: 0.5rem;
+}
+
+.message p {
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
+.fireflies {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+}
+
+.firefly {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fffacd 20%, #ffd700 60%, transparent 80%);
+    filter: blur(1px);
+    animation: float 6s infinite ease-in-out;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(15px, -20px); }
+}
