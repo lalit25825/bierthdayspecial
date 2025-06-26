@@ -10,7 +10,7 @@ require('dotenv').config();               // 1. load .env
 const mongoose = require('mongoose');     // 2. import mongoose
 mongoose.connect(process.env.MONGO_URL);  // 3. then connect
 
-const express = require('express');
+
 // ... rest of your code
 
 
