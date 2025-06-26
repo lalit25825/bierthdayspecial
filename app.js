@@ -6,6 +6,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 
+require('dotenv').config();
+mongoose.connect(process.env.MONGO_URL);
+let token = jwt.sign({username}, process.env.JWT_SECRET);
+
+
 
 app.set('view engine',"ejs");
 app.set("views", path.join(__dirname,"views"));
