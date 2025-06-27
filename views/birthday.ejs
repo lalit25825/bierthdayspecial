@@ -15,7 +15,7 @@
       background: linear-gradient(to bottom, #0f0524 0%, #2a0845 100%);
     }
 
-    /* Cosmic Sky with Shades */
+    /* Cosmic Sky */
     #sky {
       position: fixed;
       top: 0;
@@ -31,7 +31,7 @@
         radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
     }
 
-    /* Moon with Glow */
+    /* Moon */
     #moon {
       position: absolute;
       top: 15%;
@@ -43,7 +43,89 @@
       box-shadow: 
         0 0 60px 20px rgba(248, 243, 201, 0.4),
         0 0 100px 40px rgba(255, 159, 243, 0.2);
+      z-index: 2;
+    }
+
+    /* Parallax Layers */
+    .parallax-layer {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
       z-index: 1;
+      pointer-events: none;
+    }
+
+    #mountains {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300"><path fill="%232a0845" d="M0,300 L250,150 L500,250 L750,100 L1000,250 L1000,300 Z"/></svg>') bottom/cover no-repeat;
+      z-index: 3;
+      height: 40%;
+      bottom: 20%;
+      top: auto;
+    }
+
+    #hills {
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 200"><path fill="%233a1068" d="M0,200 L100,150 L300,180 L500,120 L700,170 L900,130 L1000,150 L1000,200 Z"/></svg>') bottom/cover no-repeat;
+      z-index: 4;
+      height: 30%;
+      bottom: 20%;
+      top: auto;
+    }
+
+    /* Shooting Star */
+    .shooting-star {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: white;
+      border-radius: 50%;
+      filter: blur(1px);
+      z-index: 2;
+      opacity: 0;
+    }
+
+    .shooting-star::after {
+      content: '';
+      position: absolute;
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(to right, rgba(255,255,255,1), rgba(255,255,255,0));
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* Falling Stars (for mini-game) */
+    .falling-star {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, white 0%, #ff9ff3 70%);
+      border-radius: 50%;
+      z-index: 5;
+      cursor: pointer;
+      filter: drop-shadow(0 0 5px #ff6b6b);
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s;
+    }
+
+    .falling-star:hover {
+      transform: translate(-50%, -50%) scale(1.3);
+    }
+
+    /* Star Counter */
+    #star-counter {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 1.5rem;
+      z-index: 100;
+      background: rgba(0,0,0,0.5);
+      padding: 10px 15px;
+      border-radius: 20px;
+      display: none;
     }
 
     /* Fluffy Clouds */
@@ -96,7 +178,7 @@
       z-index: 10;
     }
 
-    /* Characters - Girl position restored to left side */
+    /* Characters */
     #girl {
       position: absolute;
       bottom: 20%;
@@ -180,7 +262,7 @@
       pointer-events: none;
     }
 
-    /* Larger Chat Bubbles */
+    /* Chat Bubbles */
     .chat-bubble {
       position: absolute;
       max-width: 250px;
@@ -251,6 +333,13 @@
     <!-- Stars and clouds will be added by JS -->
   </div>
 
+  <!-- Parallax Layers -->
+  <div class="parallax-layer" id="mountains"></div>
+  <div class="parallax-layer" id="hills"></div>
+
+  <!-- Star Counter -->
+  <div id="star-counter">Stars: <span id="star-count">0</span></div>
+
   <!-- Ground -->
   <div id="ground"></div>
 
@@ -293,10 +382,96 @@
   <script>
     // Create stars
     const sky = document.getElementById('sky');
+    const body = document.body;
+    let starsCaught = 0;
     
-    // Create moon
-    const moon = document.getElementById('moon');
+    // Create shooting stars
+    function createShootingStar(x, y) {
+      const star = document.createElement('div');
+      star.className = 'shooting-star';
+      star.style.left = `${x}px`;
+      star.style.top = `${y}px`;
+      document.body.appendChild(star);
+      
+      // Animate shooting star
+      star.animate([
+        { opacity: 0, transform: 'scale(0.5)' },
+        { opacity: 1, transform: 'scale(1)' },
+        { opacity: 0, transform: 'scale(0.5) translateX(100px)' }
+      ], {
+        duration: 1000,
+        easing: 'ease-out'
+      });
+      
+      setTimeout(() => star.remove(), 1000);
+    }
+
+    // Create falling stars for mini-game
+    function createFallingStar() {
+      const star = document.createElement('div');
+      star.className = 'falling-star';
+      star.style.left = `${Math.random() * 100}%`;
+      star.style.top = '-20px';
+      document.body.appendChild(star);
+      
+      let position = -20;
+      const fallSpeed = Math.random() * 5 + 3;
+      const swayAmount = Math.random() * 4 - 2; // Random sway left/right
+      
+      const fallInterval = setInterval(() => {
+        position += fallSpeed;
+        star.style.top = `${position}px`;
+        star.style.left = `calc(${star.style.left} + ${swayAmount}px)`;
+        
+        if (position > window.innerHeight) {
+          clearInterval(fallInterval);
+          star.remove();
+        }
+      }, 20);
+      
+      star.addEventListener('click', () => {
+        clearInterval(fallInterval);
+        star.animate([
+          { transform: 'translate(-50%, -50%) scale(1)' },
+          { transform: 'translate(-50%, -50%) scale(0)' }
+        ], {
+          duration: 300,
+          easing: 'ease-out'
+        });
+        setTimeout(() => star.remove(), 300);
+        starsCaught++;
+        document.getElementById('star-count').textContent = starsCaught;
+      });
+    }
+
+    // Mouse movement tracking for shooting stars
+    let lastMouseX = 0;
+    let lastMouseY = 0;
     
+    document.addEventListener('mousemove', (e) => {
+      // Only create shooting stars if mouse is moving quickly
+      const dx = e.clientX - lastMouseX;
+      const dy = e.clientY - lastMouseY;
+      const speed = Math.sqrt(dx*dx + dy*dy);
+      
+      if (speed > 20 && Math.random() > 0.7) {
+        createShootingStar(e.clientX, e.clientY);
+      }
+      
+      lastMouseX = e.clientX;
+      lastMouseY = e.clientY;
+      
+      // Parallax effect for mountains/hills
+      const moveX = (e.clientX - window.innerWidth/2) / 50;
+      const moveY = (e.clientY - window.innerHeight/2) / 100;
+      
+      document.getElementById('mountains').style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
+      document.getElementById('hills').style.transform = `translateX(${moveX * 1.5}px) translateY(${moveY * 1.5}px)`;
+    });
+
+    // Start falling star mini-game
+    
+
     // Create clouds
     for (let i = 0; i < 15; i++) {
       const cloud = document.createElement('div');
@@ -574,6 +749,11 @@
       nextStep(); // Show girl's first dialogue
     }, 1000);
     
+    // Start the falling star game at the beginning
+    setTimeout(() => {
+      startStarGame();
+    }, 2000);
+
     // Subsequent steps on click
     document.addEventListener('click', nextStep);
   </script>
