@@ -1,82 +1,87 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
-const userModel = require('./models/user')
+const userModel = require('./models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
+const mongoose = require('mongoose');
 
-require('dotenv').config();               // 1. load .env
-const mongoose = require('mongoose');     // 2. import mongoose
-mongoose.connect(process.env.MONGO_URL);  // 3. then connect
+// Database connection with better error handling
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ Connected to MongoDB'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
-
-// ... rest of your code
-
-
-
-
-app.set('view engine',"ejs");
-app.set("views", path.join(__dirname,"views"));
-// Add this before your routes
+// Middleware
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/',function(req,res){
-    res.render('index',{error:null});
-})
+// Routes
+app.get('/', (req, res) => {
+  res.render('index', { error: null });
+});
 
-
-
-app.post('/create',function(req,res){
-    let{username,email,password}=req.body ;
-    bcrypt.genSalt(10,function(err,salt){
-        bcrypt.hash(password,salt,async function(err,hash){
-            let createdUser = await userModel.create({
-                username,
-                email,
-                password:hash,
-            })
-
-            let token = jwt.sign({username}, 'coco');
-            res.cookie('token',token);
-            res.redirect('/')
-        })
-    })
-
-
+app.post('/create', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
     
-});
+    // Basic validation
+    if (!username || !email || !password) {
+      return res.render('index', { error: 'All fields are required' });
+    }
 
-app.get('/login',function(req,res){
-    res.render('birthday');
-})
-
-app.post('/login', async function(req, res) {
-    let user = await userModel.findOne({ username: req.body.username });
-
-    if (!user) return res.render('index', { error: "Username is incorrect" });
-
-    bcrypt.compare(req.body.password, user.password, function(err, result) {
-        if (result) {
-            let token = jwt.sign({ username: user.username }, 'coco');
-            res.cookie('token', token);
-            res.render('birthday', { username: user.username });
-        } else {
-            return res.render('index', { error: "Password is incorrect" });
-        }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const createdUser = await userModel.create({ 
+      username, 
+      email, 
+      password: hashedPassword 
     });
+    
+    const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.redirect('/');
+  } catch (error) {
+    console.error(error);
+    res.render('index', { error: 'Registration failed. Please try again.' });
+  }
 });
 
+app.get('/login', (req, res) => {
+  res.render('birthday');
+});
 
-app.get('/logout',function(req,res){
-    res.cookie('token',"");
-    res.redirect('/');
-})
+app.post('/login', async (req, res) => {
+  try {
+    const user = await userModel.findOne({ username: req.body.username });
+    if (!user) {
+      return res.render('index', { error: 'Invalid credentials' }); // Generic message for security
+    }
 
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+    if (!isMatch) {
+      return res.render('index', { error: 'Invalid credentials' });
+    }
 
+    const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+    res.render('birthday', { username: user.username });
+  } catch (error) {
+    console.error(error);
+    res.render('index', { error: 'Login failed. Please try again.' });
+  }
+});
 
-app.listen(process.env.PORT || 3000);
+app.get('/logout', (req, res) => {
+  res.clearCookie('token');
+  res.redirect('/');
+});
 
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+});
